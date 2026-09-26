@@ -404,3 +404,22 @@
     preview.alt = file.name;
   });
 })();
+
+/* ---------------- History day reader ---------------- */
+(function () {
+  document.addEventListener('click', function (e) {
+    var tab = e.target.closest('[data-day-tab]');
+    if (!tab) return;
+    var key = tab.getAttribute('data-day-tab');
+    var panels = document.querySelectorAll('[data-day-panel]');
+    if (!panels.length) return;
+    e.preventDefault();
+    document.querySelectorAll('[data-day-tab]').forEach(function (t) {
+      var on = t === tab;
+      t.classList.toggle('is-selected', on);
+      t.setAttribute('aria-selected', on ? 'true' : 'false');
+    });
+    panels.forEach(function (p) { p.hidden = p.getAttribute('data-day-panel') !== key; });
+    try { history.replaceState(null, '', '?day=' + key + '#journal-reader'); } catch (err) {}
+  });
+})();

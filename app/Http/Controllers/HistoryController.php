@@ -9,7 +9,7 @@ class HistoryController extends Controller
     public function index(Request $request)
     {
         $user = $request->user();
-        $diaries = $user->weeklyDiaries()->withCount(['journals', 'targets', 'completedTargets'])->with('recap')->orderByDesc('week_start')->get();
+        $diaries = $user->weeklyDiaries()->withCount(['journals', 'targets', 'completedTargets'])->with(['recap', 'journals:id,weekly_diary_id,entry_date'])->orderByDesc('week_start')->get();
         return view('history', compact('diaries'));
     }
 }
