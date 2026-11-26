@@ -1,0 +1,24 @@
+{
+  "name": "WeDi — Weekly Diary",
+  "short_name": "WeDi",
+  "description": "A warm weekly diary for daily stories, gentle targets, and reflection.",
+  "start_url": "/dashboard",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#FAF4EC",
+  "theme_color": "#3A498F",
+  "icons": [
+    {
+      "src": "/images/wedi-logo-mark.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/images/wedi-logo-mark.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    }
+  ]
+}

@@ -46,4 +46,10 @@ return [
         ],
     ],
 
+    'wedi' => [
+        'vapid_public' => env('WEDI_VAPID_PUBLIC_KEY'),
+        'vapid_private' => env('WEDI_VAPID_PRIVATE_KEY'),
+        'vapid_subject' => env('WEDI_VAPID_SUBJECT', 'mailto:hello@wedi.app'),
+    ],
+
 ];

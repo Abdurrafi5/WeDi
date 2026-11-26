@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Services\WebPushService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cookie;
 use Illuminate\Support\Facades\Hash;
@@ -9,10 +10,17 @@ use Illuminate\Support\Str;
 
 class SettingsController extends Controller
 {
-    public function index(Request $request)
+    public function index(Request $request, WebPushService $webPush)
     {
         $user = $request->user();
-        return view('settings', ['user' => $user, 'journalCount' => $user->journals()->count(), 'targetCount' => $user->targets()->count(), 'weekCount' => $user->weeklyDiaries()->count()]);
+        return view('settings', [
+            'user' => $user,
+            'journalCount' => $user->journals()->count(),
+            'targetCount' => $user->targets()->count(),
+            'weekCount' => $user->weeklyDiaries()->count(),
+            'reminderSetting' => $user->getOrCreateReminderSetting(),
+            'vapidPublicKey' => $webPush->getPublicKey(),
+        ]);
     }
 
     public function updateProfile(Request $request)

@@ -14,6 +14,7 @@ use App\Http\Controllers\AiJournalController;
 use App\Http\Controllers\AiReflectionController;
 use App\Http\Controllers\ArtworkController;
 use App\Http\Controllers\HandFilterController;
+use App\Http\Controllers\ReminderController;
 
 /*
 |--------------------------------------------------------------------------
@@ -100,4 +101,11 @@ Route::middleware('auth')->group(function () {
     Route::post('/settings/profile', [SettingsController::class, 'updateProfile'])->name('settings.profile');
     Route::post('/settings/appearance', [SettingsController::class, 'updateAppearance'])->name('settings.appearance');
     Route::post('/settings/password', [SettingsController::class, 'updatePassword'])->name('settings.password');
+    Route::post('/settings/reminders', [ReminderController::class, 'updateSettings'])->name('reminders.update');
+
+    // Daily Reminders & Web Push
+    Route::get('/reminders/status', [ReminderController::class, 'status'])->name('reminders.status');
+    Route::post('/reminders/push-subscribe', [ReminderController::class, 'subscribePush'])->name('reminders.push.subscribe');
+    Route::delete('/reminders/push-unsubscribe', [ReminderController::class, 'unsubscribePush'])->name('reminders.push.unsubscribe');
+    Route::post('/reminders/{delivery}/read', [ReminderController::class, 'markRead'])->name('reminders.read');
 });

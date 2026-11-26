@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Hidden;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
@@ -32,6 +33,21 @@ class User extends Authenticatable
     public function aiUsageLogs(): HasMany { return $this->hasMany(AiUsageLog::class); }
     public function reflectionGenerations(): HasMany { return $this->hasMany(WeeklyReflectionGeneration::class); }
     public function artworks(): HasMany { return $this->hasMany(Artwork::class); }
+    public function reminderSetting(): HasOne { return $this->hasOne(ReminderSetting::class); }
+    public function pushSubscriptions(): HasMany { return $this->hasMany(PushSubscription::class); }
+    public function reminderDeliveries(): HasMany { return $this->hasMany(ReminderDelivery::class); }
+
+    public function getOrCreateReminderSetting(): ReminderSetting
+    {
+        return $this->reminderSetting()->firstOrCreate(
+            ['user_id' => $this->id],
+            [
+                'enabled' => true,
+                'reminder_time' => '12:00',
+                'timezone' => config('app.timezone', 'Asia/Jakarta'),
+            ]
+        );
+    }
 
     public function getOrCreateActiveDiary(): WeeklyDiary
     {

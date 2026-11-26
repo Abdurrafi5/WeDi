@@ -3,8 +3,19 @@
 @section('content')
 <div class="auth-wrap">
     <div class="auth-main">
+        <div class="auth-copy reveal-stagger">
+            <p class="eyebrow">{{ __('Your Week, Your Story.') }}</p>
+            <h1>{{ __('Cerita kecilmu') }} <em>{{ __('layak disimpan.') }}</em></h1>
+            <p>{{ __('Mulai simpan cerita mingguanmu, mulai hari ini.') }}</p>
+            <blockquote class="auth-quote">
+                “{{ __('Satu minggu yang terasa lebih utuh, satu catatan setiap hari.') }}”
+            </blockquote>
+        </div>
+
         <div class="auth-card">
-            <a href="{{ route('landing') }}" class="logo"><img src="{{ asset("images/wedi-logo-mark.png") }}" alt="WeDi" class="logo-image"><span>WeDi<small>Weekly Diary</small></span></a>
+            <a href="{{ route('landing') }}" class="logo-link auth-logo" aria-label="WeDi — Weekly Diary">
+                @include('partials.logo')
+            </a>
             <p class="auth-sub">{{ __('Mulai simpan cerita mingguanmu, mulai hari ini.') }}</p>
 
             <form method="POST" action="{{ route('register') }}" novalidate>
@@ -33,7 +44,7 @@
             </form>
 
             <p class="auth-foot">{{ __('Sudah punya akun?') }} <a href="{{ route('login') }}">{{ __('Masuk di sini') }}</a></p>
-            <p class="auth-foot"><a href="{{ route('landing') }}">← {{ __('Kembali ke beranda') }}</a></p>
+            <p class="auth-foot"><a href="{{ route('landing') }}"><i class="ri-arrow-left-line" aria-hidden="true"></i> {{ __('Kembali ke beranda') }}</a></p>
         </div>
     </div>
 </div>

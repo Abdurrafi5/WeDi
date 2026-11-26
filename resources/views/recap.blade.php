@@ -1,5 +1,130 @@
 @extends('layouts.app')
 @section('title', __('Recap — WeDi'))
 @section('content')
-<div class="dashboard-page recap-page"><div class="page-head"><div><p class="page-kicker">{{ __('Weekly reflection') }}</p><h1>{{ __('Your weekly recap') }}</h1><p>{{ $diary->range_label }}</p></div><span class="recap-status"><i class="ri-sparkling-line"></i> {{ $recap && ($recap->achievement || $recap->reflection) ? __('In progress') : __('Ready to reflect') }}</span></div><section class="recap-hero"><div class="recap-hero-copy"><span class="panel-kicker">{{ __('A look back at your week') }}</span><h2>{{ $progress >= 70 ? __('You made meaningful progress.') : __('Every small step still counts.') }}</h2><p>{{ $journalCount ? __('You captured :count moments this week. Take a breath and notice what they tell you.', ['count'=>$journalCount]) : __('Your week is still open. Add a journal or target before you reflect.') }}</p></div><div class="recap-hero-progress"><strong>{{ $progress }}%</strong><span>{{ __('target progress') }}</span><div class="progress-bar"><span style="width:{{ $progress }}%"></span></div></div></section><div class="recap-stat-row"><div class="stat-card"><i class="ri-book-open-line recap-stat-icon"></i><div class="stat-label">{{ __('Journals') }}</div><div class="stat-value">{{ $journalCount }}<small>/7</small></div><span class="stat-subcaption">{{ __('days captured') }}</span></div><div class="stat-card"><i class="ri-checkbox-circle-line recap-stat-icon"></i><div class="stat-label">{{ __('Targets done') }}</div><div class="stat-value">{{ $completedCount }}<small>/{{ $totalTargets }}</small></div><span class="stat-subcaption">{{ __('completed this week') }}</span></div><div class="stat-card"><i class="ri-emotion-line recap-stat-icon"></i><div class="stat-label">{{ __('Mood notes') }}</div><div class="stat-value">{{ $moodCounts->count() }}</div><span class="stat-subcaption">{{ __('different moods') }}</span></div></div><div class="recap-grid"><section class="card recap-week-card"><div class="panel-heading"><div><span class="panel-kicker">{{ __('Your rhythm') }}</span><h2>{{ __('Seven days, one story') }}</h2></div><i class="ri-calendar-check-line panel-heading-icon"></i></div><div class="recap-week-strip">@foreach($weekDays as $day)<div class="recap-day {{ $day['journal']?'has-entry':'' }}"><span>{{ $day['date']->isoFormat('ddd') }}</span><strong>{{ $day['date']->format('d') }}</strong><i class="{{ $day['journal']?'ri-check-line':'ri-subtract-line' }}"></i></div>@endforeach</div><div class="recap-mood-list"><span>{{ __('Mood this week') }}</span>@forelse($moodCounts as $mood=>$count)<div class="mood-chip"><i class="ri-emotion-line"></i>{{ $mood }} <b>{{ $count }}</b></div>@empty<span class="muted">{{ __('No mood notes yet') }}</span>@endforelse</div></section><section class="card recap-target-card"><div class="panel-heading"><div><span class="panel-kicker">{{ __('Progress') }}</span><h2>{{ __('Targets completed') }}</h2></div><a href="{{ route('targets.index') }}" class="panel-link">{{ __('View all') }} →</a></div>@forelse($targets->take(5) as $target)<div class="recap-target-row"><i class="{{ $target->is_completed?'ri-checkbox-circle-fill':'ri-checkbox-blank-circle-line' }}"></i><span class="{{ $target->is_completed?'done':'' }}">{{ $target->title }}</span><small>{{ ucfirst($target->priority) }}</small></div>@empty<p class="muted">{{ __('No targets were added this week.') }}</p>@endforelse</section></div>@include('partials.ai-weekly-reflection')<div class="recap-reflection-heading"><span class="panel-kicker">{{ __('Make space for meaning') }}</span><h2>{{ __('What do you want to remember?') }}</h2></div><form method="POST" action="{{ route('recap.store') }}" class="recap-form">@csrf<div class="reflection-card reflection-achievement"><label for="achievement"><i class="ri-trophy-line"></i><span>{{ __('Achievement') }}</span></label><textarea id="achievement" name="achievement" placeholder="{{ __('What are you proud of this week?') }}">{{ old('achievement',$recap->achievement ?? '') }}</textarea></div><div class="reflection-card reflection-reflection"><label for="reflection"><i class="ri-chat-quote-line"></i><span>{{ __('Reflection') }}</span></label><textarea id="reflection" name="reflection" placeholder="{{ __('What felt easy, hard, or unexpected?') }}">{{ old('reflection',$recap->reflection ?? '') }}</textarea></div><div class="reflection-card reflection-lesson"><label for="lesson_learned"><i class="ri-lightbulb-line"></i><span>{{ __('What I learned') }}</span></label><textarea id="lesson_learned" name="lesson_learned" placeholder="{{ __('A thought worth carrying forward...') }}">{{ old('lesson_learned',$recap->lesson_learned ?? '') }}</textarea></div><div class="reflection-card reflection-plan"><label for="next_week_plan"><i class="ri-route-line"></i><span>{{ __('Next week plan') }}</span></label><textarea id="next_week_plan" name="next_week_plan" placeholder="{{ __('What is one gentle intention for next week?') }}">{{ old('next_week_plan',$recap->next_week_plan ?? '') }}</textarea></div><div class="recap-save-row"><p><i class="ri-lock-line"></i> {{ __('Only you can see this reflection.') }}</p><button type="submit" class="btn btn-primary"><i class="ri-save-line"></i> {{ __('Save recap') }}</button></div></form></div>
+<div class="dashboard-page recap-page">
+    <div class="page-head">
+        <div>
+            <p class="page-kicker">{{ __('Weekly reflection') }}</p>
+            <h1>{{ __('Your weekly recap') }}</h1>
+            <p>{{ $diary->range_label }}</p>
+        </div>
+        <span class="recap-status">
+            <i class="ri-sparkling-line" aria-hidden="true"></i>
+            {{ $recap && ($recap->achievement || $recap->reflection) ? __('In progress') : __('Ready to reflect') }}
+        </span>
+    </div>
+
+    <section class="recap-hero">
+        <div class="recap-hero-copy">
+            <span class="panel-kicker">{{ __('A look back at your week') }}</span>
+            <h2>{{ $progress >= 70 ? __('You made meaningful progress.') : __('Every small step still counts.') }}</h2>
+            <p>{{ $journalCount ? __('You captured :count moments this week. Take a breath and notice what they tell you.', ['count' => $journalCount]) : __('Your week is still open. Add a journal or target before you reflect.') }}</p>
+        </div>
+        <div class="recap-hero-progress">
+            <strong>{{ $progress }}%</strong>
+            <span>{{ __('target progress') }}</span>
+            <div class="progress-bar"><span style="width:{{ $progress }}%"></span></div>
+        </div>
+    </section>
+
+    <div class="recap-stat-row">
+        <div class="stat-card">
+            <i class="ri-book-open-line recap-stat-icon" aria-hidden="true"></i>
+            <div class="stat-label">{{ __('Journals') }}</div>
+            <div class="stat-value">{{ $journalCount }}<small>/7</small></div>
+            <span class="stat-subcaption">{{ __('days captured') }}</span>
+        </div>
+        <div class="stat-card">
+            <i class="ri-checkbox-circle-line recap-stat-icon" aria-hidden="true"></i>
+            <div class="stat-label">{{ __('Targets done') }}</div>
+            <div class="stat-value">{{ $completedCount }}<small>/{{ $totalTargets }}</small></div>
+            <span class="stat-subcaption">{{ __('completed this week') }}</span>
+        </div>
+        <div class="stat-card">
+            <i class="ri-emotion-line recap-stat-icon" aria-hidden="true"></i>
+            <div class="stat-label">{{ __('Mood notes') }}</div>
+            <div class="stat-value">{{ $moodCounts->count() }}</div>
+            <span class="stat-subcaption">{{ __('different moods') }}</span>
+        </div>
+    </div>
+
+    <div class="recap-grid">
+        <section class="card recap-week-card">
+            <div class="panel-heading">
+                <div>
+                    <span class="panel-kicker">{{ __('Your rhythm') }}</span>
+                    <h2>{{ __('Seven days, one story') }}</h2>
+                </div>
+                <i class="ri-calendar-check-line panel-heading-icon" aria-hidden="true"></i>
+            </div>
+            <div class="recap-week-strip">
+                @foreach($weekDays as $day)
+                <div class="recap-day {{ $day['journal'] ? 'has-entry' : '' }}">
+                    <span>{{ $day['date']->isoFormat('ddd') }}</span>
+                    <strong>{{ $day['date']->format('d') }}</strong>
+                    <i class="{{ $day['journal'] ? 'ri-check-line' : 'ri-subtract-line' }}" aria-hidden="true"></i>
+                </div>
+                @endforeach
+            </div>
+            <div class="recap-mood-list">
+                <span>{{ __('Mood this week') }}</span>
+                @forelse($moodCounts as $mood => $count)
+                <div class="mood-chip"><i class="ri-emotion-line" aria-hidden="true"></i>{{ $mood }} <b>{{ $count }}</b></div>
+                @empty
+                <span class="muted">{{ __('No mood notes yet') }}</span>
+                @endforelse
+            </div>
+        </section>
+
+        <section class="card recap-target-card">
+            <div class="panel-heading">
+                <div>
+                    <span class="panel-kicker">{{ __('Progress') }}</span>
+                    <h2>{{ __('Targets completed') }}</h2>
+                </div>
+                <a href="{{ route('targets.index') }}" class="panel-link">{{ __('View all') }} →</a>
+            </div>
+            @forelse($targets->take(5) as $target)
+            <div class="recap-target-row">
+                <i class="{{ $target->is_completed ? 'ri-checkbox-circle-fill' : 'ri-checkbox-blank-circle-line' }}" aria-hidden="true"></i>
+                <span class="{{ $target->is_completed ? 'done' : '' }}">{{ $target->title }}</span>
+                <small>{{ ucfirst($target->priority) }}</small>
+            </div>
+            @empty
+            <p class="muted">{{ __('No targets were added this week.') }}</p>
+            @endforelse
+        </section>
+    </div>
+
+    @include('partials.ai-weekly-reflection')
+
+    <div class="recap-reflection-heading">
+        <span class="panel-kicker">{{ __('Make space for meaning') }}</span>
+        <h2>{{ __('What do you want to remember?') }}</h2>
+    </div>
+
+    <form method="POST" action="{{ route('recap.store') }}" class="recap-form">
+        @csrf
+        <div class="reflection-card reflection-achievement">
+            <label for="achievement"><i class="ri-trophy-line" aria-hidden="true"></i><span>{{ __('Achievement') }}</span></label>
+            <textarea id="achievement" name="achievement" placeholder="{{ __('What are you proud of this week?') }}">{{ old('achievement', $recap->achievement ?? '') }}</textarea>
+        </div>
+        <div class="reflection-card reflection-reflection">
+            <label for="reflection"><i class="ri-chat-quote-line" aria-hidden="true"></i><span>{{ __('Reflection') }}</span></label>
+            <textarea id="reflection" name="reflection" placeholder="{{ __('What felt easy, hard, or unexpected?') }}">{{ old('reflection', $recap->reflection ?? '') }}</textarea>
+        </div>
+        <div class="reflection-card reflection-lesson">
+            <label for="lesson_learned"><i class="ri-lightbulb-line" aria-hidden="true"></i><span>{{ __('What I learned') }}</span></label>
+            <textarea id="lesson_learned" name="lesson_learned" placeholder="{{ __('A thought worth carrying forward...') }}">{{ old('lesson_learned', $recap->lesson_learned ?? '') }}</textarea>
+        </div>
+        <div class="reflection-card reflection-plan">
+            <label for="next_week_plan"><i class="ri-route-line" aria-hidden="true"></i><span>{{ __('Next week plan') }}</span></label>
+            <textarea id="next_week_plan" name="next_week_plan" placeholder="{{ __('What is one gentle intention for next week?') }}">{{ old('next_week_plan', $recap->next_week_plan ?? '') }}</textarea>
+        </div>
+        <div class="recap-save-row">
+            <p><i class="ri-lock-line" aria-hidden="true"></i> {{ __('Only you can see this reflection.') }}</p>
+            <button type="submit" class="btn btn-primary"><i class="ri-save-line" aria-hidden="true"></i> {{ __('Save recap') }}</button>
+        </div>
+    </form>
+</div>
 @endsection

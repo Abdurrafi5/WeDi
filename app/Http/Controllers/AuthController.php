@@ -51,6 +51,7 @@ class AuthController extends Controller
             'password' => Hash::make($validated['password']),
         ]);
         $user->forceFill(['locale' => app()->getLocale()])->save();
+        $user->getOrCreateReminderSetting();
 
         Auth::login($user);
         $request->session()->regenerate();
