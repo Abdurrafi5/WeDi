@@ -1,3 +1,51 @@
+# WeDi — Weekly Diary
+
+Aplikasi diary mingguan berbasis Laravel 13. **Phase 2** menambahkan AI, permainan dengan hand tracking, dan studio gambar.
+
+## Fitur Phase 2
+
+| Fitur | Halaman | Catatan |
+|---|---|---|
+| **WeDi AI** (chatbox) | `/ai` | Riwayat tersimpan, New Chat, hapus per-percakapan / semua, batas pemakaian |
+| **AI Journal Assistant** | `/journal/create`, `/journal/{id}/edit` | Writing Starter, Expand, Improve Clarity, Find the Right Words, Reflection Questions; preview + Copy/Insert |
+| **Weekly Reflection AI** | `/recap` | Pilih jurnal (persetujuan wajib), generate 6 bagian, edit, simpan ke Weekly Recap |
+| **Hand Tracking Engine** | `public/js/hand-tracking.js` | MediaPipe Hand Landmarker, 21 landmark, pointer telunjuk, pinch, Start/Stop Camera |
+| **Bubble Pop** | `/games/bubble-pop` | Canvas, 3 tingkat kesulitan + level naik, kombo, Burst (pinch), skor ke `game_scores` |
+| **Hand Gesture Drawing** | `/draw`, `/draw/gallery` | Kuas, warna, penghapus, undo, clear, simpan ke Laravel Storage (privat), galeri |
+
+## Setup Phase 2
+
+```bash
+composer install && npm install
+cp .env.example .env && php artisan key:generate
+# isi OPENAI_API_KEY di .env (hanya di server, jangan dibagikan)
+php artisan migrate
+php artisan serve
+```
+
+Variabel `.env` baru: `OPENAI_API_KEY`, `OPENAI_MODEL` (default `gpt-4o-mini`), `OPENAI_BASE_URL`, `OPENAI_TIMEOUT`, `OPENAI_MAX_OUTPUT_TOKENS`, `AI_DAILY_LIMIT` (default 40/hari/pengguna), `AI_PER_MINUTE_LIMIT` (default 8/menit).
+
+Hand tracking memerlukan **HTTPS atau `localhost`** (syarat browser untuk akses kamera) dan internet untuk memuat MediaPipe + model dari CDN saat kamera pertama kali diaktifkan.
+
+## Keamanan & privasi
+
+- API key hanya dibaca server dari `.env`; browser hanya memanggil endpoint WeDi.
+- Semua percakapan, refleksi, dan artwork di-scope ke pemiliknya (`findOrFail` lewat relasi user → 404 untuk orang lain).
+- Jurnal hanya dikirim ke AI setelah pengguna mencentang jurnalnya **dan** menyetujui pengiriman.
+- Batas pemakaian: throttle per menit (`throttle:ai`) + batas harian di `AiService`; setiap panggilan dicatat di `ai_usage_logs`.
+- Webcam hanya aktif setelah tombol ditekan + izin browser; video diproses lokal, tidak dikirim/disimpan.
+- Artwork disimpan di disk privat (`storage/app/private/artworks/{user_id}`) dan hanya disajikan lewat route yang memeriksa pemilik; hanya tersimpan saat pengguna menekan Simpan.
+
+## Pengujian
+
+```bash
+php artisan test
+```
+
+Test baru: `AiChatTest`, `AiJournalAssistantTest`, `ArtworkTest` (OpenAI di-fake dengan `Http::fake`).
+
+---
+
 <p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
 
 <p align="center">

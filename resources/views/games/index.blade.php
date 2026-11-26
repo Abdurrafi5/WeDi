@@ -22,6 +22,27 @@
         <p class="g-best">{{ __('Best score') }}: <span id="best-word-bloom">{{ $bestScores['word-bloom'] ?? '—' }}</span></p>
         <a href="#game-word-bloom" class="btn btn-secondary btn-sm">{{ __('Main') }}</a>
     </div>
+    <div class="game-card featured">
+        <span class="new-badge"><i class="ri-sparkling-2-line" aria-hidden="true"></i> {{ __('Baru') }}</span>
+        <div class="g-icon"></div>
+        <h3>{{ __('Bubble Pop') }}</h3>
+        <p class="g-best">{{ __('Best score') }}: <span id="best-bubble-pop">{{ $bestScores['bubble-pop'] ?? '—' }}</span></p>
+        <a href="{{ route('games.bubblePop') }}" class="btn btn-primary btn-sm"><i class="ri-hand-heart-line" aria-hidden="true"></i> {{ __('Main dengan tangan') }}</a>
+    </div>
+    <div class="game-card featured">
+        <span class="new-badge"><i class="ri-sparkling-2-line" aria-hidden="true"></i> {{ __('Baru') }}</span>
+        <div class="g-icon"></div>
+        <h3>{{ __('Hand Gesture Drawing') }}</h3>
+        <p class="g-best">{{ __('Gambar dengan gerakan tangan') }}</p>
+        <a href="{{ route('draw.index') }}" class="btn btn-secondary btn-sm">{{ __('Buka studio') }}</a>
+    </div>
+    <div class="game-card featured">
+        <span class="new-badge"><i class="ri-sparkling-2-line" aria-hidden="true"></i> {{ __('Baru') }}</span>
+        <div class="g-icon"></div>
+        <h3>Hand Filter Studio</h3>
+        <p class="g-best">{{ __('Kotak dari dua tangan + efek kamera') }}</p>
+        <a href="{{ route('filter.index') }}" class="btn btn-primary btn-sm"><i class="ri-magic-line" aria-hidden="true"></i> {{ __('Coba filter') }}</a>
+    </div>
 </div>
 
 {{-- Memory Match --}}

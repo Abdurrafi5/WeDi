@@ -28,6 +28,10 @@ class User extends Authenticatable
     public function targets(): HasMany { return $this->hasMany(Target::class); }
     public function recaps(): HasMany { return $this->hasMany(Recap::class); }
     public function gameScores(): HasMany { return $this->hasMany(GameScore::class); }
+    public function aiConversations(): HasMany { return $this->hasMany(AiConversation::class); }
+    public function aiUsageLogs(): HasMany { return $this->hasMany(AiUsageLog::class); }
+    public function reflectionGenerations(): HasMany { return $this->hasMany(WeeklyReflectionGeneration::class); }
+    public function artworks(): HasMany { return $this->hasMany(Artwork::class); }
 
     public function getOrCreateActiveDiary(): WeeklyDiary
     {

@@ -28,6 +28,7 @@ class GameScore extends Model
         'memory-match',
         'zen-tap',
         'word-bloom',
+        'bubble-pop',
     ];
 
     public function user(): BelongsTo

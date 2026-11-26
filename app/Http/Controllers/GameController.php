@@ -22,6 +22,13 @@ class GameController extends Controller
         return view('games.index', compact('bestScores'));
     }
 
+    public function bubblePop(Request $request)
+    {
+        $best = $request->user()->gameScores()->where('game_id', 'bubble-pop')->max('score');
+
+        return view('games.bubble-pop', ['best' => $best]);
+    }
+
     public function saveScore(Request $request)
     {
         $validated = $request->validate([

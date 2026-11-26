@@ -28,6 +28,17 @@ return [
         'region' => env('AWS_DEFAULT_REGION', 'us-east-1'),
     ],
 
+    'openai' => [
+        'key' => env('OPENAI_API_KEY'),
+        'base_url' => env('OPENAI_BASE_URL', 'https://api.openai.com/v1'),
+        'model' => env('OPENAI_MODEL', 'gpt-4o-mini'),
+        'timeout' => (int) env('OPENAI_TIMEOUT', 45),
+        'max_output_tokens' => (int) env('OPENAI_MAX_OUTPUT_TOKENS', 900),
+        // Batas penggunaan AI per pengguna.
+        'daily_limit' => (int) env('AI_DAILY_LIMIT', 40),
+        'per_minute' => (int) env('AI_PER_MINUTE_LIMIT', 8),
+    ],
+
     'slack' => [
         'notifications' => [
             'bot_user_oauth_token' => env('SLACK_BOT_USER_OAUTH_TOKEN'),

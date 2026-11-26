@@ -9,6 +9,11 @@ use App\Http\Controllers\RecapController;
 use App\Http\Controllers\HistoryController;
 use App\Http\Controllers\GameController;
 use App\Http\Controllers\SettingsController;
+use App\Http\Controllers\AiChatController;
+use App\Http\Controllers\AiJournalController;
+use App\Http\Controllers\AiReflectionController;
+use App\Http\Controllers\ArtworkController;
+use App\Http\Controllers\HandFilterController;
 
 /*
 |--------------------------------------------------------------------------
@@ -58,6 +63,8 @@ Route::middleware('auth')->group(function () {
     // Recap
     Route::get('/recap', [RecapController::class, 'index'])->name('recap.index');
     Route::post('/recap', [RecapController::class, 'store'])->name('recap.store');
+    Route::post('/recap/ai/generate', [AiReflectionController::class, 'generate'])->middleware('throttle:ai')->name('recap.ai.generate');
+    Route::post('/recap/ai/{generation}/save', [AiReflectionController::class, 'save'])->name('recap.ai.save');
 
     // History
     Route::get('/history', [HistoryController::class, 'index'])->name('history.index');
@@ -65,7 +72,28 @@ Route::middleware('auth')->group(function () {
 
     // Games
     Route::get('/games', [GameController::class, 'index'])->name('games.index');
+    Route::get('/games/bubble-pop', [GameController::class, 'bubblePop'])->name('games.bubblePop');
     Route::post('/games/score', [GameController::class, 'saveScore'])->name('games.saveScore');
+
+    // WeDi AI
+    Route::get('/ai', [AiChatController::class, 'index'])->name('ai.index');
+    Route::post('/ai', [AiChatController::class, 'store'])->name('ai.store');
+    Route::delete('/ai', [AiChatController::class, 'destroyAll'])->name('ai.destroyAll');
+    Route::post('/ai/journal-assist', [AiJournalController::class, 'assist'])->middleware('throttle:ai')->name('ai.journal');
+    Route::get('/ai/{conversation}', [AiChatController::class, 'show'])->name('ai.show');
+    Route::post('/ai/{conversation}/messages', [AiChatController::class, 'message'])->middleware('throttle:ai')->name('ai.message');
+    Route::delete('/ai/{conversation}', [AiChatController::class, 'destroy'])->name('ai.destroy');
+
+    // Hand Gesture Drawing
+    Route::get('/draw', [ArtworkController::class, 'index'])->name('draw.index');
+    Route::get('/draw/gallery', [ArtworkController::class, 'gallery'])->name('draw.gallery');
+    Route::post('/draw/artworks', [ArtworkController::class, 'store'])->name('draw.store');
+    Route::put('/draw/artworks/{artwork}', [ArtworkController::class, 'update'])->name('draw.update');
+    Route::get('/draw/artworks/{artwork}/image', [ArtworkController::class, 'image'])->name('draw.image');
+    Route::delete('/draw/artworks/{artwork}', [ArtworkController::class, 'destroy'])->name('draw.destroy');
+
+    // Hand Filter Studio
+    Route::get('/filter', [HandFilterController::class, 'index'])->name('filter.index');
 
     // Settings
     Route::get('/settings', [SettingsController::class, 'index'])->name('settings');
